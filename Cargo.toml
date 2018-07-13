@@ -1,0 +1,27 @@
+[package]
+name = "domain_writer"
+version = "0.1.0"
+authors = ["Fabio Gibson <fabiogibson@hotmail.com>"]
+
+[dependencies]
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+lazy_static = "1.0"
+r2d2 = "0.8"
+r2d2_postgres = "0.14"
+redis = "0.8"
+r2d2_redis = "0.7"
+actix="0.5"
+actix-web = "0.6"
+regex = "1.0"
+futures = "0.1"
+time = "*"
+
+[dependencies.uuid]
+version = "0.5.0"
+features = ["serde", "v4"]
+
+[dependencies.postgres]
+version = "*"
+features = ["with-serde_json", "with-uuid"]
