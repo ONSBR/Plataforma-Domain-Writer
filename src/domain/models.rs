@@ -1,24 +1,13 @@
+use infra::postgres_batch::{BatchSql, CommandTypes};
 use serde_json;
+use std::collections::HashMap;
 use std::fmt;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ModelMetadata {
     pub model_type: String,
-    pub state: ModelState,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Eq, Hash, Debug)]
-pub enum ModelState {
-    Insert,
-    //Delete,
-    Update,
-}
-
-impl fmt::Display for ModelState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self)
-    }
+    pub state: CommandTypes,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -43,17 +32,13 @@ impl ModelContainer {
     pub fn value(&self, field: &String) -> String {
         let val = self.entity.get(field).unwrap();
 
-        if field == "id" {
+        if field == PK_NAME {
             format!("'{}'", Uuid::new_v4())
         } else if val.is_string() {
             val.to_string().replace("\"", "'")
         } else {
             val.to_string()
         }
-    }
-
-    pub fn pk(&self) -> String {
-        self.value(&PK_NAME.to_string()).to_string()
     }
 
     pub fn fields(&self) -> Vec<String> {
@@ -67,5 +52,41 @@ impl ModelContainer {
         }
 
         fields
+    }
+}
+
+pub trait ModelContainerBatchSql {
+    fn apppend_item(&mut self, container: &ModelContainer);
+    fn from_containers(containers: &Vec<ModelContainer>) -> Vec<BatchSql>;
+}
+
+impl ModelContainerBatchSql for BatchSql {
+    fn apppend_item(&mut self, container: &ModelContainer) {
+        self.items.push(
+            self.fields
+                .iter()
+                .map(|f| container.value(f))
+                .collect::<Vec<String>>(),
+        );
+    }
+
+    fn from_containers(containers: &Vec<ModelContainer>) -> Vec<BatchSql> {
+        let mut batches = HashMap::new();
+
+        for mut model in containers.into_iter() {
+            let batch = batches
+                .entry((model.table_name().clone(), model.metadata.state.clone()))
+                .or_insert_with(|| {
+                    BatchSql::new(
+                        model.table_name().clone(),
+                        model.fields(),
+                        model.metadata.state,
+                    )
+                });
+
+            batch.apppend_item(model);
+        }
+
+        batches.into_iter().map(|(_, v)| v).collect()
     }
 }

@@ -1,4 +1,5 @@
-use super::{Mapper, ModelState};
+use super::super::infra::postgres_batch::CommandTypes;
+use super::Mapper;
 use r2d2;
 use r2d2_redis;
 use redis;
@@ -17,7 +18,7 @@ impl RedisMapper {
 impl Mapper for RedisMapper {
     type Result = redis::RedisResult<()>;
 
-    fn get(&self, solution_id: &str, map_id: &str, stmt_type: ModelState) -> Option<String> {
+    fn get(&self, solution_id: &str, map_id: &str, stmt_type: CommandTypes) -> Option<String> {
         let conn = self.pool.get().unwrap();
         let key = format!("{}_{}_{}", solution_id, map_id, stmt_type);
 
@@ -31,7 +32,7 @@ impl Mapper for RedisMapper {
         &self,
         solution_id: &str,
         model_type: &str,
-        stmt_type: ModelState,
+        stmt_type: CommandTypes,
         query: String,
     ) -> Self::Result {
         let key: String = format!("{}_{}_{}", solution_id, model_type, stmt_type);
