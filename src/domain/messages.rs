@@ -83,7 +83,12 @@ mod command_builders {
         }
 
         let update_arrays: Vec<String> = mp.iter()
-            .map(|(f, v)| format!("unnest(array[{}]) as {}", v.join(","), f))
+            .map(|(f, v)| {
+                if f == "id" {
+                    return format!("unnest(array[{}::uuid]) as {}", v.join(","), f);
+                }
+                format!("unnest(array[{}]) as {}", v.join(","), f)
+            })
             .collect();
 
         format!(
