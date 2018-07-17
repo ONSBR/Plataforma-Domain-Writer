@@ -5,12 +5,13 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ModelMetadata {
     pub model_type: String,
+    pub state: ModelState,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Hash, Debug)]
 pub enum ModelState {
     Insert,
-    Delete,
+    //Delete,
     Update,
 }
 
