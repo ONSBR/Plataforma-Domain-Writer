@@ -13,7 +13,7 @@ impl ConnectionPoolBuilder {
             .build(manager)
         {
             Ok(pool) => Ok(pool),
-            Err(e) => Err(),
+            Err(_) => Err(()),
         }
     }
 
@@ -22,7 +22,11 @@ impl ConnectionPoolBuilder {
         let manager = r2d2_redis::RedisConnectionManager::new(connection_string.as_str()).unwrap();
         match ConnectionPoolBuilder::build(manager, None) {
             Ok(pool) => pool,
-            Err() => panic!("Could not connect to redis instance on {}/{}", host, db),
+            Err(_) => panic!(
+                "Could not connect to redis instance on {host}/{db}",
+                host = host,
+                db = db
+            ),
         }
     }
 
@@ -42,6 +46,12 @@ impl ConnectionPoolBuilder {
             r2d2_postgres::TlsMode::None,
         ).unwrap();
 
-        ConnectionPoolBuilder::build(manager, Some(32))
+        match ConnectionPoolBuilder::build(manager, Some(32)) {
+            Ok(pool) => pool,
+            Err(_) => panic!(
+                "Could not connect to postgres instance on {host}",
+                host = host,
+            ),
+        }
     }
 }
