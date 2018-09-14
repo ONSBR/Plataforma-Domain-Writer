@@ -1,6 +1,5 @@
 use r2d2;
 use r2d2_postgres;
-use r2d2_redis;
 pub struct ConnectionPoolBuilder {}
 
 impl ConnectionPoolBuilder {
@@ -17,26 +16,13 @@ impl ConnectionPoolBuilder {
         }
     }
 
-    pub fn build_redis(host: String, db: u32) -> r2d2::Pool<r2d2_redis::RedisConnectionManager> {
-        let connection_string = format!{"redis://{}/{}", host, db};
-        let manager = r2d2_redis::RedisConnectionManager::new(connection_string.as_str()).unwrap();
-        match ConnectionPoolBuilder::build(manager, None) {
-            Ok(pool) => pool,
-            Err(_) => panic!(
-                "Could not connect to redis instance on {host}/{db}",
-                host = host,
-                db = db
-            ),
-        }
-    }
-
     pub fn build_postgres(
         host: String,
         port: u32,
         db: String,
     ) -> r2d2::Pool<r2d2_postgres::PostgresConnectionManager> {
         let connection_string = format!(
-            "postgres://postgres@{host}:{port}/{db}",
+            "postgres://postgres:postgres@{host}:{port}/{db}",
             host = host,
             port = port,
             db = db

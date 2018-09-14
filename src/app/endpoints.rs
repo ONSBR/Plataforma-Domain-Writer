@@ -1,19 +1,33 @@
 use super::server::AppState;
 use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json};
-use domain::messages::CommitMessage;
-use domain::models::ModelContainer;
+use domain::messages::{CommitMessage,MigrationMessage};
+use domain::models::{ModelContainer,Table,MigrationCommands};
 use futures::Future;
+
 
 pub fn write_models(
     (req, data): (HttpRequest<AppState>, Json<Vec<ModelContainer>>),
-) -> FutureResponse<HttpResponse> {
+    ) -> FutureResponse<HttpResponse> {
     req.state()
         .domain
         .send(CommitMessage { models: data.0 })
         .from_err()
         .and_then(|res| match res {
-            Ok(user) => Ok(HttpResponse::Ok().json(user)),
+            Ok(ret) => Ok(HttpResponse::Ok().json(ret)),
             Err(_) => Ok(HttpResponse::InternalServerError().into()),
         })
-        .responder()
+    .responder()
 }
+
+pub fn create_table((req,data): (HttpRequest<AppState>, Json<Table>)) -> FutureResponse<HttpResponse> {
+    req.state()
+        .domain
+        .send(MigrationMessage::<Table>{object: data.0, command: MigrationCommands::Create })
+        .from_err()
+        .and_then(|res| match res {
+            Ok(data) => Ok(HttpResponse::Ok().json(data)),
+            Err(_) => Ok(HttpResponse::InternalServerError().into()),
+        })
+    .responder()
+}
+

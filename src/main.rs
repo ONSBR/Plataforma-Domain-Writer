@@ -8,6 +8,7 @@ extern crate r2d2_redis;
 extern crate redis;
 extern crate time;
 extern crate uuid;
+extern crate barrel;
 
 #[macro_use]
 extern crate serde_derive;
@@ -22,8 +23,7 @@ fn main() {
     //TODO: get settings from env
     let localhost = String::from("127.0.0.1");
     let server_cfg = app::config::ServerConfig(localhost.clone(), 8000, 3);
-    let redis_cfg = app::config::RedisConfig(localhost.clone(), 1);
-    let pg_cfg = app::config::PostgresConfig(localhost.clone(), 5432, String::from("domain"));
+    let pg_cfg = app::config::PostgresConfig(localhost.clone(), 5432, String::from("postgres"));
 
-    app::server::run(server_cfg, redis_cfg, pg_cfg);
+    app::server::run(server_cfg, pg_cfg);
 }

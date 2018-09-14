@@ -1,0 +1,8 @@
+{
+  "name":"foo",
+  "columns": [{
+    "name": "int_col",  
+    "nullable": true,
+    "datatype": "Integer"
+  }]
+}

@@ -90,3 +90,33 @@ impl ModelContainerBatchSql for BatchSql {
         batches.into_iter().map(|(_, v)| v).collect()
     }
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Table {
+    pub name: String,
+    pub columns: Vec<Column>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum ColumnType {
+    Text,
+    Varchar,
+    Integer,
+    Float,
+    Double,
+    Boolean,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Column {
+    pub name: String,
+    pub nullable: bool,
+    pub datatype: ColumnType,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum MigrationCommands {
+    Create,
+    Update,
+    Delete,
+}
