@@ -1,8 +1,15 @@
 {
-  "name":"foo",
-  "columns": [{
-    "name": "int_col",  
-    "nullable": true,
-    "datatype": "Integer"
-  }]
+    "name":"foo",
+    "columns": [
+        {
+            "name": "int_col",
+            "nullable": true,
+            "datatype": "Integer"
+        },
+        {
+            "name": "text_cool",
+            "nullable":true,
+            "datatype": "Text"
+        }
+    ]
 }

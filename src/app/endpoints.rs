@@ -1,7 +1,10 @@
 use super::server::AppState;
 use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json};
-use domain::messages::{CommitMessage,MigrationMessage};
-use domain::models::{ModelContainer,Table,MigrationCommands};
+use domain::messages::migration::{MigrationMessage};
+use domain::messages::data::{CommitMessage};
+use domain::models::migrations::{MigrationCommands};
+use domain::models::schema::{Table};
+use domain::models::data::{ModelContainer};
 use futures::Future;
 
 

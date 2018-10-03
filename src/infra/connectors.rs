@@ -27,6 +27,7 @@ impl ConnectionPoolBuilder {
             port = port,
             db = db
         );
+
         let manager = r2d2_postgres::PostgresConnectionManager::new(
             connection_string,
             r2d2_postgres::TlsMode::None,
