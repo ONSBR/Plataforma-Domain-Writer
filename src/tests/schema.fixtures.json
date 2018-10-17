@@ -1,4 +1,5 @@
 {
+    "database": "testing", 
     "name":"foo",
     "columns": [
         {
@@ -7,7 +8,7 @@
             "datatype": "Integer"
         },
         {
-            "name": "text_cool",
+            "name": "text_col",
             "nullable":true,
             "datatype": "Text"
         }

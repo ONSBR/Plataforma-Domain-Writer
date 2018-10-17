@@ -1,5 +1,6 @@
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Table {
+    pub database: String,
     pub name: String,
     pub columns: Vec<Column>,
 }
